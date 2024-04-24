@@ -1,4 +1,9 @@
-from pypdf import PdfReader
+from pypdf import PdfReader 
+import google.generativeai as genai
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain import PromptTemplate
+from langchain_community.vectorstores import Chroma
+
 
 def getTextFromPdf(pdfFile):
 #    creating object of pdf reader
@@ -6,7 +11,6 @@ def getTextFromPdf(pdfFile):
 
     #getting the number of pages in pdf 
      num_pages = len(pdf_reader.pages)
-     print(num_pages)
      #getting the text of each page
      allText = ""
      for page_no in range(num_pages):
@@ -23,7 +27,19 @@ def split_text(text):
     chunked_text = text.split('\n\n')
 
     #adding each chunk in list
-    for i in chunked_text:
+    return chunked_text
+
+def generateEmbeddings(chunkedText):
+
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001",google_api_key = "RAIzaSyANqyvxOpFeKyVjDI_fbkTGp2aaKYu_MS4Z")
+    db = Chroma.from_texts(chunkedText, embeddings)
+
+
+
+   
+
+
+    
         
 
         
@@ -31,5 +47,8 @@ def split_text(text):
 
 # main
 allText = getTextFromPdf('abc.pdf')
-print(len(allText))
+chunked_text = split_text(allText)
+generateEmbeddings(chunked_text)
+
+
 
